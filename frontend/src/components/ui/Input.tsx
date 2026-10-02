@@ -34,12 +34,12 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
     const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
 
     const baseControlClasses = cn(
-      'w-full rounded-lg border bg-white dark:bg-surface-900 px-3.5 py-2 text-sm text-surface-900 dark:text-white',
-      'placeholder:text-surface-400 dark:placeholder:text-surface-500',
-      'border-surface-300 dark:border-surface-700',
-      'focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500',
+      'w-full rounded-lg border px-3.5 py-2 text-sm text-white',
+      'placeholder:text-surface-600',
+      'bg-[rgba(255,255,255,0.04)] border-white/[0.08]',
+      'focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500/50',
       'transition duration-150',
-      error && 'border-red-500 focus:ring-red-500 focus:border-red-500',
+      error && 'border-red-500/50 focus:ring-red-500/30',
       leftIcon && 'pl-10',
       rightIcon && 'pr-10',
       className
@@ -48,7 +48,7 @@ export const Input = forwardRef<HTMLInputElement | HTMLTextAreaElement, InputPro
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+          <label htmlFor={inputId} className="block text-xs font-semibold mb-1.5 uppercase tracking-wider" style={{ color:'rgba(148,163,184,0.85)' }}>
             {label}
           </label>
         )}

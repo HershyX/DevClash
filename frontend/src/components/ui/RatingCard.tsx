@@ -1,8 +1,5 @@
 import { forwardRef, HTMLAttributes } from 'react';
-import { cn, formatRating, getRatingColor } from '../../utils';
-import { Card, CardContent } from './Card';
-import { ProgressBar } from './ProgressBar';
-import { Badge } from './Badge';
+import { cn, formatRating } from '../../utils';
 
 export interface RatingCardProps extends HTMLAttributes<HTMLDivElement> {
   type: 'duel' | 'practice' | 'adaptive';
@@ -18,151 +15,127 @@ export interface RatingCardProps extends HTMLAttributes<HTMLDivElement> {
   showProgress?: boolean;
 }
 
-const typeConfig = {
+const cfg = {
   duel: {
     label: 'DUEL',
     icon: '⚔️',
-    color: 'duel',
-    gradient: 'from-duel-500 to-duel-600',
-    bg: 'bg-duel-50 dark:bg-duel-900/20',
-    border: 'border-duel-200 dark:border-duel-800',
+    accent:       '#f59e0b',
+    accentLight:  '#fcd34d',
+    border:       'rgba(245,158,11,0.2)',
+    bg:           'rgba(245,158,11,0.06)',
+    glow:         'rgba(245,158,11,0.15)',
+    bar:          'linear-gradient(90deg,#fbbf24,#f59e0b)',
+    levelBg:      'rgba(245,158,11,0.15)',
+    levelText:    '#fcd34d',
   },
   practice: {
     label: 'PROBLEM SET',
     icon: '💻',
-    color: 'practice',
-    gradient: 'from-practice-500 to-practice-600',
-    bg: 'bg-practice-50 dark:bg-practice-900/20',
-    border: 'border-practice-200 dark:border-practice-800',
+    accent:       '#06b6d4',
+    accentLight:  '#67e8f9',
+    border:       'rgba(6,182,212,0.2)',
+    bg:           'rgba(6,182,212,0.06)',
+    glow:         'rgba(6,182,212,0.15)',
+    bar:          'linear-gradient(90deg,#22d3ee,#06b6d4)',
+    levelBg:      'rgba(6,182,212,0.15)',
+    levelText:    '#67e8f9',
   },
   adaptive: {
     label: 'ADAPTIVE',
     icon: '🧠',
-    color: 'adaptive',
-    gradient: 'from-adaptive-500 to-adaptive-600',
-    bg: 'bg-adaptive-50 dark:bg-adaptive-900/20',
-    border: 'border-adaptive-200 dark:border-adaptive-800',
+    accent:       '#d946ef',
+    accentLight:  '#f0abfc',
+    border:       'rgba(217,70,239,0.2)',
+    bg:           'rgba(217,70,239,0.06)',
+    glow:         'rgba(217,70,239,0.15)',
+    bar:          'linear-gradient(90deg,#e879f9,#d946ef)',
+    levelBg:      'rgba(217,70,239,0.15)',
+    levelText:    '#f0abfc',
   },
 };
 
 const RatingCard = forwardRef<HTMLDivElement, RatingCardProps>(
-  ({
-    className,
-    type,
-    rating,
-    level,
-    xp,
-    xpToNextLevel,
-    weeklyXpGain,
-    trend = 'stable',
-    rank,
-    percentile,
-    compact = false,
-    showProgress = true,
-    ...props
-  }, ref) => {
-    const config = typeConfig[type];
-    const totalXpForLevel = xp + xpToNextLevel;
-    const progressPercentage = totalXpForLevel > 0 ? (xp / totalXpForLevel) * 100 : 0;
-
-    const trendIcons = {
-      up: (
-        <svg className="w-4 h-4 text-practice-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      ),
-      down: (
-        <svg className="w-4 h-4 text-duel-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      ),
-      stable: (
-        <svg className="w-4 h-4 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-        </svg>
-      ),
-    };
+  ({ className, type, rating, level, xp, xpToNextLevel, weeklyXpGain, trend = 'stable', rank, percentile, compact = false, showProgress = true, ...props }, ref) => {
+    const c = cfg[type];
+    const total = xp + xpToNextLevel;
+    const pct   = total > 0 ? Math.round((xp / total) * 100) : 0;
 
     return (
-      <Card
+      <div
         ref={ref}
-        variant="outlined"
-        className={cn(
-          config.border,
-          config.bg,
-          'relative overflow-hidden transition-all duration-300 hover:shadow-lg',
-          compact && 'p-4',
-          className
-        )}
+        className={cn('relative rounded-xl overflow-hidden transition-all duration-200 hover:-translate-y-0.5', className)}
+        style={{
+          background: `radial-gradient(ellipse 80% 50% at 50% -10%, ${c.glow} 0%, transparent 65%), #0d1117`,
+          border: `1px solid ${c.border}`,
+          boxShadow: `0 4px 20px rgba(0,0,0,0.3)`,
+        }}
         {...props}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
-        
-        <div className="relative flex flex-col h-full">
-          <div className="flex items-start justify-between mb-4">
+        {/* Top accent bar */}
+        <div className="h-[2px] w-full" style={{ background: c.bar }} />
+
+        <div className={cn('p-5', compact && 'p-4')}>
+          {/* Header row */}
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="text-2xl" aria-hidden="true">{config.icon}</span>
+              <span className="text-xl">{c.icon}</span>
               <div>
-                <span className={cn('text-xs font-semibold uppercase tracking-wider', `text-${config.color}-700 dark:text-${config.color}-300`)}>
-                  {config.label}
+                <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: c.accentLight }}>
+                  {c.label}
                 </span>
-                {rank && (
-                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-0.5">{rank}</p>
-                )}
+                {rank && <p className="text-[10px] mt-0.5" style={{ color:'rgba(100,116,139,0.8)' }}>{rank}</p>}
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              {trendIcons[trend]}
-              {percentile && (
-                <span className="text-xs font-medium text-surface-600 dark:text-surface-400">
-                  Top {100 - percentile}%
-                </span>
+              {trend === 'up'   && <svg className="w-4 h-4" style={{ color:'#34d399' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>}
+              {trend === 'down' && <svg className="w-4 h-4" style={{ color:'#f87171' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>}
+              {trend === 'stable' && <svg className="w-4 h-4" style={{ color:'rgba(100,116,139,0.7)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14"/></svg>}
+              {percentile != null && (
+                <span className="text-xs font-medium" style={{ color:'rgba(148,163,184,0.8)' }}>Top {100 - percentile}%</span>
               )}
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-center items-center text-center mb-4">
-            <div className="mb-2">
-              <span className={cn('text-4xl font-bold tabular-nums', compact && 'text-3xl', getRatingColor(rating))}>
-                {formatRating(rating)}
-              </span>
+          {/* Rating number */}
+          <div className="text-center mb-4">
+            <div
+              className={cn('font-black tabular-nums', compact ? 'text-3xl' : 'text-4xl')}
+              style={{ color: c.accent, textShadow:`0 0 24px ${c.accent}60` }}
+            >
+              {formatRating(rating)}
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className={cn('font-medium px-2 py-0.5 rounded-full', `bg-${config.color}-100 text-${config.color}-700 dark:bg-${config.color}-900/30 dark:text-${config.color}-300`)}>
+            <div className="mt-2 flex items-center justify-center gap-2">
+              <span
+                className="px-2.5 py-0.5 rounded-full text-xs font-bold"
+                style={{ background: c.levelBg, color: c.levelText, border:`1px solid ${c.border}` }}
+              >
                 Level {level}
               </span>
               {compact && (
-                <>
-                  <span className="text-surface-500 dark:text-surface-400">•</span>
-                  <span className="font-mono text-brand-600 dark:text-brand-400">{xp.toLocaleString()} XP</span>
-                </>
+                <span className="text-xs font-mono font-semibold" style={{ color:'rgba(148,163,184,0.8)' }}>
+                  {xp.toLocaleString()} XP
+                </span>
               )}
             </div>
           </div>
 
+          {/* Progress */}
           {showProgress && !compact && (
-            <div className="space-y-3 pt-4 border-t border-surface-200 dark:border-surface-700">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-surface-600 dark:text-surface-400">XP Progress</span>
-                <span className="font-mono font-medium text-surface-900 dark:text-white">
-                  {xp.toLocaleString()} / {totalXpForLevel.toLocaleString()}
-                </span>
-              </div>
-              <ProgressBar
-                value={xp}
-                max={totalXpForLevel}
-                variant={type}
-                size="md"
-                showLabel={false}
-              />
+            <div className="space-y-2 pt-4" style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-surface-500 dark:text-surface-400">
-                  {xpToNextLevel.toLocaleString()} XP to Level {level + 1}
-                </span>
-                <span className={cn('font-medium flex items-center gap-1', weeklyXpGain >= 0 ? 'text-practice-600' : 'text-duel-600')}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ 
-                    backgroundColor: weeklyXpGain >= 0 ? '#22c55e' : '#ef4444' 
-                  }} />
+                <span style={{ color:'rgba(100,116,139,0.8)' }}>XP Progress</span>
+                <span className="font-mono font-semibold text-white">{xp.toLocaleString()} / {total.toLocaleString()}</span>
+              </div>
+              <div className="h-2 rounded-full overflow-hidden" style={{ background:'rgba(255,255,255,0.06)' }}>
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{ width:`${pct}%`, background: c.bar, boxShadow:`0 0 6px ${c.accent}80` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span style={{ color:'rgba(100,116,139,0.7)' }}>{xpToNextLevel.toLocaleString()} XP to Level {level + 1}</span>
+                <span className="font-semibold flex items-center gap-1" style={{ color: weeklyXpGain >= 0 ? '#6ee7b7' : '#fca5a5' }}>
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: weeklyXpGain >= 0 ? '#10b981' : '#ef4444' }}/>
                   {weeklyXpGain >= 0 ? '+' : ''}{weeklyXpGain} XP this week
                 </span>
               </div>
@@ -170,39 +143,24 @@ const RatingCard = forwardRef<HTMLDivElement, RatingCardProps>(
           )}
 
           {compact && (
-            <div className="pt-3 border-t border-surface-200 dark:border-surface-700 flex items-center justify-between">
-              <ProgressBar
-                value={xp}
-                max={totalXpForLevel}
-                variant={type}
-                size="sm"
-                showLabel={false}
-                className="flex-1 mr-3"
-              />
-              <div className="text-right">
-                <p className="text-xs text-surface-500 dark:text-surface-400">Weekly</p>
-                <p className={cn('text-xs font-medium', weeklyXpGain >= 0 ? 'text-practice-600' : 'text-duel-600')}>
-                  {weeklyXpGain >= 0 ? '+' : ''}{weeklyXpGain} XP
-                </p>
+            <div className="pt-3 flex items-center gap-3" style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background:'rgba(255,255,255,0.06)' }}>
+                <div className="h-full rounded-full" style={{ width:`${pct}%`, background: c.bar }}/>
               </div>
+              <span className="text-[11px] font-semibold shrink-0" style={{ color: weeklyXpGain >= 0 ? '#6ee7b7' : '#fca5a5' }}>
+                {weeklyXpGain >= 0 ? '+' : ''}{weeklyXpGain} XP
+              </span>
             </div>
           )}
         </div>
-      </Card>
+      </div>
     );
   }
 );
-
 RatingCard.displayName = 'RatingCard';
-
 export { RatingCard };
 
-export interface CompactRatingCardProps extends Omit<RatingCardProps, 'compact'> {
-  compact?: true;
-}
-
-export const CompactRatingCard = forwardRef<HTMLDivElement, CompactRatingCardProps>(
-  (props, ref) => <RatingCard ref={ref} {...props} compact={true} showProgress={false} />,
-);
-
+export const CompactRatingCard = forwardRef<HTMLDivElement, Omit<RatingCardProps,'compact'>>((props, ref) => (
+  <RatingCard ref={ref} {...props} compact showProgress={false} />
+));
 CompactRatingCard.displayName = 'CompactRatingCard';

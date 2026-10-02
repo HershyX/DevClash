@@ -57,10 +57,10 @@ export function StudentDashboard() {
         transition={{ duration: 0.5 }}
       >
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-white">
+          <h1 className="text-2xl lg:text-3xl font-bold text-white">
             Welcome back, {student?.name.split(' ')[0] || 'Coder'}!
           </h1>
-          <p className="text-surface-600 dark:text-surface-400 mt-1">
+          <p className="mt-1" style={{ color:'rgba(100,116,139,0.9)' }}>
             Here's your progress across all three rating systems
           </p>
         </div>
@@ -145,15 +145,15 @@ export function StudentDashboard() {
           {/* Section Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-surface-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-base font-bold text-white flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-500"></span>
                 Performance Breakdown
               </h2>
-              <p className="text-xs text-surface-500 dark:text-surface-400">
+              <p className="text-xs mt-0.5" style={{ color:'rgba(100,116,139,0.8)' }}>
                 Key metrics across duels, practice sets, and adaptive learning
               </p>
             </div>
-            <span className="text-xs font-medium text-surface-500 dark:text-surface-400 bg-surface-100 dark:bg-surface-800 px-2.5 py-1 rounded-full">
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ background:'rgba(255,255,255,0.06)', color:'rgba(148,163,184,0.8)', border:'1px solid rgba(255,255,255,0.08)' }}>
               Season 1 Active
             </span>
           </div>

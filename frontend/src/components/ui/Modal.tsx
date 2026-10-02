@@ -106,41 +106,41 @@ export function Modal({
           ref={modalRef}
           tabIndex={-1}
           className={cn(
-            'relative w-full bg-white dark:bg-surface-900 rounded-xl shadow-xl animate-scale-in',
+            'relative w-full rounded-xl shadow-xl animate-scale-in',
+            'bg-[#0d1117] border border-white/[0.08]',
             sizeClasses[size],
             className
           )}
         >
           {(title || showCloseButton) && (
-            <div className="flex items-start justify-between p-6 border-b border-surface-200 dark:border-surface-700">
+            <div className="flex items-start justify-between p-5" style={{ borderBottom:'1px solid rgba(255,255,255,0.07)' }}>
               <div>
                 {title && (
-                  <h2 id="modal-title" className="text-lg font-semibold text-surface-900 dark:text-white">
-                    {title}
-                  </h2>
+                  <h2 id="modal-title" className="text-base font-semibold text-white">{title}</h2>
                 )}
                 {description && (
-                  <p id="modal-description" className="mt-1 text-sm text-surface-500 dark:text-surface-400">
-                    {description}
-                  </p>
+                  <p id="modal-description" className="mt-1 text-sm" style={{ color:'rgba(100,116,139,0.9)' }}>{description}</p>
                 )}
               </div>
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="p-1 rounded-lg text-surface-400 hover:text-surface-600 dark:hover:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+                  className="p-1.5 rounded-lg transition-colors"
+                  style={{ color:'rgba(100,116,139,0.8)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background='rgba(255,255,255,0.06)')}
+                  onMouseLeave={e => (e.currentTarget.style.background='transparent')}
                   aria-label="Close modal"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </button>
               )}
             </div>
           )}
-          <div className="p-6">{children}</div>
+          <div className="p-5">{children}</div>
           {footer && (
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-surface-200 dark:border-surface-700">
+            <div className="flex items-center justify-end gap-3 p-5" style={{ borderTop:'1px solid rgba(255,255,255,0.07)' }}>
               {footer}
             </div>
           )}

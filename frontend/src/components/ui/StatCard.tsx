@@ -1,7 +1,5 @@
 import { forwardRef, HTMLAttributes } from 'react';
 import { cn } from '../../utils';
-import { Card, CardContent } from './Card';
-import { Badge } from './Badge';
 
 export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   label: string;
@@ -15,169 +13,110 @@ export interface StatCardProps extends HTMLAttributes<HTMLDivElement> {
   progress?: { value: number; max?: number; label?: string };
 }
 
+// All dark-native styles — no light-mode colors
+const colorMap: Record<string, { border: string; accent: string; accentText: string; iconBg: string; glow: string }> = {
+  default:  { border:'rgba(255,255,255,0.07)', accent:'#6366f1', accentText:'#a5b4fc', iconBg:'rgba(99,102,241,0.12)',  glow:'' },
+  primary:  { border:'rgba(99,102,241,0.2)',   accent:'#6366f1', accentText:'#a5b4fc', iconBg:'rgba(99,102,241,0.15)',  glow:'rgba(99,102,241,0.06)' },
+  brand:    { border:'rgba(99,102,241,0.2)',   accent:'#6366f1', accentText:'#a5b4fc', iconBg:'rgba(99,102,241,0.15)',  glow:'rgba(99,102,241,0.06)' },
+  success:  { border:'rgba(16,185,129,0.2)',   accent:'#10b981', accentText:'#6ee7b7', iconBg:'rgba(16,185,129,0.15)',  glow:'rgba(16,185,129,0.06)' },
+  practice: { border:'rgba(6,182,212,0.2)',    accent:'#06b6d4', accentText:'#67e8f9', iconBg:'rgba(6,182,212,0.15)',   glow:'rgba(6,182,212,0.06)' },
+  warning:  { border:'rgba(245,158,11,0.2)',   accent:'#f59e0b', accentText:'#fcd34d', iconBg:'rgba(245,158,11,0.15)',  glow:'rgba(245,158,11,0.06)' },
+  danger:   { border:'rgba(245,158,11,0.2)',   accent:'#f59e0b', accentText:'#fcd34d', iconBg:'rgba(245,158,11,0.15)',  glow:'rgba(245,158,11,0.06)' },
+  adaptive: { border:'rgba(217,70,239,0.2)',   accent:'#d946ef', accentText:'#f0abfc', iconBg:'rgba(217,70,239,0.15)',  glow:'rgba(217,70,239,0.06)' },
+};
+
 const StatCard = forwardRef<HTMLDivElement, StatCardProps>(
-  ({
-    className,
-    label,
-    value,
-    subtitle,
-    icon,
-    trend,
-    trendValue,
-    variant = 'default',
-    size = 'md',
-    progress,
-    children,
-    ...props
-  }, ref) => {
-    const colorStyles = {
-      default: {
-        border: 'border-surface-200/80 dark:border-surface-700/60',
-        bg: 'bg-white/80 dark:bg-surface-900/80',
-        iconBg: 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300',
-        accent: 'bg-surface-500',
-      },
-      primary: {
-        border: 'border-brand-500/20 dark:border-brand-500/30',
-        bg: 'bg-gradient-to-br from-brand-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-brand-500/15 text-brand-600 dark:text-brand-400 ring-1 ring-brand-500/20',
-        accent: 'bg-brand-500',
-      },
-      brand: {
-        border: 'border-brand-500/20 dark:border-brand-500/30',
-        bg: 'bg-gradient-to-br from-brand-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-brand-500/15 text-brand-600 dark:text-brand-400 ring-1 ring-brand-500/20',
-        accent: 'bg-brand-500',
-      },
-      success: {
-        border: 'border-practice-500/20 dark:border-practice-500/30',
-        bg: 'bg-gradient-to-br from-practice-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-practice-500/15 text-practice-600 dark:text-practice-400 ring-1 ring-practice-500/20',
-        accent: 'bg-practice-500',
-      },
-      practice: {
-        border: 'border-practice-500/20 dark:border-practice-500/30',
-        bg: 'bg-gradient-to-br from-practice-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-practice-500/15 text-practice-600 dark:text-practice-400 ring-1 ring-practice-500/20',
-        accent: 'bg-practice-500',
-      },
-      warning: {
-        border: 'border-amber-500/20 dark:border-amber-500/30',
-        bg: 'bg-gradient-to-br from-amber-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 ring-1 ring-amber-500/20',
-        accent: 'bg-amber-500',
-      },
-      danger: {
-        border: 'border-duel-500/20 dark:border-duel-500/30',
-        bg: 'bg-gradient-to-br from-duel-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-duel-500/15 text-duel-600 dark:text-duel-400 ring-1 ring-duel-500/20',
-        accent: 'bg-duel-500',
-      },
-      adaptive: {
-        border: 'border-adaptive-500/20 dark:border-adaptive-500/30',
-        bg: 'bg-gradient-to-br from-adaptive-500/5 via-white dark:via-surface-900 to-transparent',
-        iconBg: 'bg-adaptive-500/15 text-adaptive-600 dark:text-adaptive-400 ring-1 ring-adaptive-500/20',
-        accent: 'bg-adaptive-500',
-      },
-    };
-
-    const style = colorStyles[variant] || colorStyles.default;
-
-    const trendIcons = {
-      up: (
-        <svg className="w-3.5 h-3.5 text-practice-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      ),
-      down: (
-        <svg className="w-3.5 h-3.5 text-duel-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      ),
-      stable: (
-        <svg className="w-3.5 h-3.5 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14" />
-        </svg>
-      ),
-    };
+  ({ className, label, value, subtitle, icon, trend, trendValue, variant = 'default', size = 'md', progress, children, ...props }, ref) => {
+    const c = colorMap[variant] ?? colorMap.default;
 
     return (
       <div
         ref={ref}
-        className={cn(
-          'relative rounded-xl border backdrop-blur-sm p-4 transition-all duration-200 hover:shadow-md dark:hover:shadow-surface-950/40 hover:-translate-y-0.5 group',
-          style.border,
-          style.bg,
-          className
-        )}
+        className={cn('relative rounded-xl p-4 transition-all duration-200 hover:-translate-y-0.5 group overflow-hidden', className)}
+        style={{
+          background: c.glow ? `radial-gradient(ellipse 80% 50% at 50% 0%, ${c.glow} 0%, transparent 70%), #0d1117` : '#0d1117',
+          border: `1px solid ${c.border}`,
+        }}
         {...props}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', style.accent)} />
-              <p className="text-xs font-semibold uppercase tracking-wider text-surface-500 dark:text-surface-400 truncate">
+            {/* Label */}
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: c.accent, boxShadow:`0 0 6px ${c.accent}` }} />
+              <p className="text-[11px] font-bold uppercase tracking-wider truncate" style={{ color:'rgba(100,116,139,0.9)' }}>
                 {label}
               </p>
             </div>
-            <p className={cn(
-              'mt-1.5 font-bold tracking-tight text-surface-900 dark:text-white truncate tabular-nums',
+
+            {/* Value */}
+            <p className={cn('font-bold tracking-tight text-white truncate tabular-nums',
               size === 'sm' && 'text-xl',
               size === 'md' && 'text-2xl',
-              size === 'lg' && 'text-3xl'
+              size === 'lg' && 'text-3xl',
             )}>
               {value}
             </p>
+
+            {/* Subtitle */}
             {subtitle && (
-              <p className="mt-0.5 text-xs text-surface-500 dark:text-surface-400 font-medium">
-                {subtitle}
-              </p>
+              <p className="mt-0.5 text-xs font-medium" style={{ color:'rgba(100,116,139,0.8)' }}>{subtitle}</p>
             )}
+
+            {/* Trend */}
             {(trend || trendValue !== undefined) && (
-              <div className="mt-2 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-surface-100/80 dark:bg-surface-800/80 text-xs">
-                {trend && trendIcons[trend]}
+              <div className="mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-md" style={{ background:'rgba(255,255,255,0.05)' }}>
+                {trend === 'up'   && <svg className="w-3 h-3" style={{ color:'#10b981' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>}
+                {trend === 'down' && <svg className="w-3 h-3" style={{ color:'#f59e0b' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>}
+                {trend === 'stable' && <svg className="w-3 h-3" style={{ color:'rgba(100,116,139,0.8)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 12h14"/></svg>}
                 {trendValue !== undefined && (
-                  <span className={cn(
-                    'font-medium text-[11px]',
-                    trend === 'up' ? 'text-practice-600 dark:text-practice-400' : trend === 'down' ? 'text-duel-600 dark:text-duel-400' : 'text-surface-600 dark:text-surface-400'
-                  )}>
+                  <span className="text-[11px] font-semibold" style={{ color: trend === 'up' ? '#6ee7b7' : trend === 'down' ? '#fcd34d' : 'rgba(148,163,184,0.9)' }}>
                     {trendValue}
                   </span>
                 )}
               </div>
             )}
           </div>
+
+          {/* Icon */}
           {icon && (
-            <div className={cn(
-              'flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-transform group-hover:scale-105',
-              style.iconBg
-            )}>
+            <div
+              className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
+              style={{ background: c.iconBg, border:`1px solid ${c.border}`, color: c.accentText }}
+            >
               {icon}
             </div>
           )}
         </div>
+
+        {/* Progress bar */}
         {progress && (
-          <div className="mt-3 pt-2.5 border-t border-surface-200/50 dark:border-surface-700/50">
-            <div className="flex items-center justify-between text-[11px] text-surface-500 dark:text-surface-400 mb-1">
-              <span>{progress.label || 'Progress'}</span>
-              <span className="font-mono font-medium">{Math.min(Math.round((progress.value / (progress.max || 100)) * 100), 100)}%</span>
+          <div className="mt-3 pt-2.5" style={{ borderTop:'1px solid rgba(255,255,255,0.06)' }}>
+            <div className="flex items-center justify-between mb-1.5" style={{ fontSize:11, color:'rgba(100,116,139,0.8)' }}>
+              <span>{progress.label ?? 'Progress'}</span>
+              <span className="font-mono font-semibold" style={{ color: c.accentText }}>
+                {Math.min(Math.round((progress.value / (progress.max || 100)) * 100), 100)}%
+              </span>
             </div>
-            <div className="h-1.5 w-full bg-surface-200 dark:bg-surface-800 rounded-full overflow-hidden">
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background:'rgba(255,255,255,0.06)' }}>
               <div
-                className={cn('h-full rounded-full transition-all duration-500', style.accent)}
-                style={{ width: `${Math.min(Math.max((progress.value / (progress.max || 100)) * 100, 0), 100)}%` }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width:`${Math.min(Math.max((progress.value / (progress.max || 100)) * 100, 0), 100)}%`,
+                  background: c.accent,
+                  boxShadow: `0 0 6px ${c.accent}80`,
+                }}
               />
             </div>
           </div>
         )}
+
         {children && <div className="mt-3">{children}</div>}
       </div>
     );
   }
 );
-
 StatCard.displayName = 'StatCard';
-
 export { StatCard };
 
 export interface StatGridProps {
@@ -188,29 +127,7 @@ export interface StatGridProps {
 }
 
 export function StatGrid({ children, columns = 3, gap = 'md', className }: StatGridProps) {
-  const columnClasses = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 md:grid-cols-2',
-    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
-  };
-
-  const gapClasses = {
-    sm: 'gap-3',
-    md: 'gap-4',
-    lg: 'gap-6',
-  };
-
-  return (
-    <div
-      className={cn(
-        'grid',
-        columnClasses[columns],
-        gapClasses[gap],
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
+  const colClass = { 1:'grid-cols-1', 2:'grid-cols-1 md:grid-cols-2', 3:'grid-cols-1 md:grid-cols-2 lg:grid-cols-3', 4:'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' };
+  const gapClass = { sm:'gap-3', md:'gap-4', lg:'gap-6' };
+  return <div className={cn('grid', colClass[columns], gapClass[gap], className)}>{children}</div>;
 }
