@@ -1,0 +1,21 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: devclash-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      # Dev-only credentials, overridden via .env if desired
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-devclash}
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  mongo_data:

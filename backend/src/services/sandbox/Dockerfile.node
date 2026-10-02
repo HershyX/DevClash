@@ -1,0 +1,8 @@
+FROM node:20-alpine
+
+# Run as non-root
+RUN addgroup -S sandbox && adduser -S sandbox -G sandbox
+USER sandbox
+
+WORKDIR /sandbox
+CMD ["node", "/sandbox/solution.js"]
