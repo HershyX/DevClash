@@ -1,89 +1,86 @@
-import { Button } from '../ui/Button';
-import { Icon } from '../ui/Icon';
-import { cn } from '../../utils';
+import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export function CTA() {
   return (
-    <section className="py-20 lg:py-32 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-600 via-brand-700 to-adaptive-700" />
-      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-20" />
-      
-      {/* Animated background elements */}
-      <motion.div 
-        className="absolute top-10 left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.1, 0.2, 0.1],
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
+    <section className="py-24 lg:py-32 relative overflow-hidden" style={{ background:'#07080a' }}>
+
+      {/* Gradient mesh */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background:[
+          'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(99,102,241,0.2)  0%, transparent 65%)',
+          'radial-gradient(ellipse 40% 40% at 20% 30%, rgba(6,182,212,0.08)  0%, transparent 55%)',
+          'radial-gradient(ellipse 40% 40% at 80% 70%, rgba(217,70,239,0.08) 0%, transparent 55%)',
+        ].join(','),
+      }}/>
+
+      {/* Grid pattern */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ backgroundImage:'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize:'32px 32px' }}
       />
-      <motion.div 
-        className="absolute bottom-10 right-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"
-        animate={{
-          scale: [1.3, 1, 1.3],
-          opacity: [0.1, 0.2, 0.1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      <div className="relative max-w-4xl mx-auto px-4 lg:px-6 text-center">
-        <motion.div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-sm font-medium mb-8 border border-white/20 backdrop-blur-sm"
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+
+      <div className="relative max-w-3xl mx-auto px-5 lg:px-8 text-center">
+
+        <motion.div
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8"
+          style={{ background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.1)' }}
+          initial={{ opacity:0, scale:0.85 }} whileInView={{ opacity:1, scale:1 }}
+          viewport={{ once:true }} transition={{ duration:0.45 }}
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/50"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+            <span className="absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-70 animate-ping"/>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"/>
           </span>
-          Ready to start your journey?
+          <span className="text-sm font-medium text-surface-300">Ready to start?</span>
         </motion.div>
 
-        <motion.h2 
-          className="text-4xl lg:text-5xl font-bold text-white mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 0.6 }}
+        <motion.h2
+          className="font-black text-white mb-5"
+          style={{ fontSize:'clamp(2rem,4.5vw,3.5rem)', lineHeight:1.1, letterSpacing:'-0.03em' }}
+          initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
+          viewport={{ once:true }} transition={{ delay:0.1, duration:0.6, ease:[0.16,1,0.3,1] }}
         >
-          Join thousands of developers leveling up their skills
+          Level up your coding.{' '}
+          <span style={{
+            background:'linear-gradient(135deg,#818cf8,#c084fc,#f0abfc)',
+            WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text',
+          }}>One rep at a time.</span>
         </motion.h2>
 
-        <motion.p 
-          className="text-lg lg:text-xl text-white/80 mb-10 max-w-2xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3, duration: 0.6 }}
+        <motion.p
+          className="text-surface-400 text-base lg:text-lg mb-10 leading-relaxed"
+          initial={{ opacity:0, y:16 }} whileInView={{ opacity:1, y:0 }}
+          viewport={{ once:true }} transition={{ delay:0.2, duration:0.5 }}
         >
-          Choose your path: compete in real-time duels, master problem sets, or let AI adapt to you.
-          All with independent ratings that actually mean something.
+          Demo accounts are backed by a real MongoDB database. Every rating change, submission, and battle is persisted — nothing is mocked.
         </motion.p>
 
-        <motion.div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-center gap-3"
+          initial={{ opacity:0, y:16 }} whileInView={{ opacity:1, y:0 }}
+          viewport={{ once:true }} transition={{ delay:0.3, duration:0.5 }}
         >
-          <Button size="xl" variant="secondary" className="bg-white text-brand-700 hover:bg-white/90" leftIcon={<Icon name="arrowUpRight" />}>
-            Start Free
-          </Button>
-          <Button size="xl" variant="outline" className="border-white/30 text-white hover:bg-white/10" leftIcon={<Icon name="trophy" />}>
-            Try Demo Battle
-          </Button>
+          <NavLink
+            to="/login"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-bold text-white transition-all hover:-translate-y-0.5"
+            style={{
+              background:'linear-gradient(135deg,#6366f1,#8b5cf6)',
+              boxShadow:'0 0 28px rgba(99,102,241,0.45), 0 4px 20px rgba(0,0,0,0.3)',
+            }}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+            Start for Free
+          </NavLink>
+
+          <NavLink
+            to="/login"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-surface-300 transition-all hover:text-white hover:bg-white/[0.04]"
+            style={{ border:'1px solid rgba(255,255,255,0.1)' }}
+          >
+            ⚔️ Demo Battle
+          </NavLink>
         </motion.div>
       </div>
     </section>
